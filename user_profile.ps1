@@ -1,5 +1,5 @@
 # in profile:
-# . $env:USERPROFILE\.config\powershell\user_profile.ps1
+# . $env:USERPROFILE\.config\pwsh-profile\user_profile.ps1
 
 # Location
 # ~/.config/powershell/user_profile.ps1 
@@ -55,4 +55,8 @@ Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
             [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
         }
 }
+
+# pnpm  (https://github.com/g-plane/pnpm-shell-completion)
+$PNPM_COMPLETION_SCRIPT = Join-Path (Get-ScriptDirectory) 'pnpm-shell-completion\pnpm-shell-completion.ps1'
+. $PNPM_COMPLETION_SCRIPT
 
