@@ -14,6 +14,9 @@ oh-my-posh init pwsh --config $PROMPT_CONFIG | Invoke-Expression
 # Import-Module
 Import-Module Terminal-Icons
 Import-Module z
+Import-Module posh-git
+
+$env:POSH_GIT_ENABLED = $true
 
 # PSReadLine
 Set-PSReadLineOption -PredictionViewStyle ListView
