@@ -27,7 +27,7 @@ Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 
 # Alias
 Set-Alias vim nvim
-Remove-Item Alias:ni -Force -ErrorAction Ignore # 删除 `ni` 命令用于执行@antfu/ni
+Remove-Item Alias:ni -Force -ErrorAction Ignore # remove `ni` to use @antfu/ni
 function d { nr dev }
 function b { nr build }
 function t { nr test }
