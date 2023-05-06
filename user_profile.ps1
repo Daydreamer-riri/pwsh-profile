@@ -29,6 +29,7 @@ Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 Set-Alias vim nvim
 Remove-Item Alias:ni -Force -ErrorAction Ignore # remove `ni` to use @antfu/ni
 function d { nr dev }
+function s { nr start }
 function b { nr build }
 function t { nr test }
 function tu { nr test -u }
