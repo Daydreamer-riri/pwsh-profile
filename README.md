@@ -4,10 +4,12 @@ My pwsh profile
 ## Usage
 
 First, you should install [**PowerShell**](https://www.microsoft.com/store/productId/9MZ1SNWT0N5D) and [**Oh-My-Posh**](https://apps.microsoft.com/store/detail/XP8K0HKJFRXGCK) through `MS Store` or `Winget`.
+Besides that, I am also using GitHub CLI.
 
 ```powershell
 winget install JanDeDobbeleer.OhMyPosh -s winget
 winget install Microsoft.Powershell -s winget
+winget install --id GitHub.cli
 ```
 
 This profile requires the installation of the following three modules.
