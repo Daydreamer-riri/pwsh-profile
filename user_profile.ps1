@@ -18,6 +18,8 @@ Import-Module posh-git
 
 $env:POSH_GIT_ENABLED = $true
 
+Invoke-Expression -Command $(gh completion -s powershell | Out-String)
+
 # PSReadLine
 Set-PSReadLineOption -PredictionViewStyle ListView
 Set-PSReadLineOption -PredictionSource HistoryAndPlugin
