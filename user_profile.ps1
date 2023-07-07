@@ -12,7 +12,7 @@ $PROMPT_CONFIG = Join-Path (Get-ScriptDirectory) 'pure-moded.omp.json'
 oh-my-posh init pwsh --config $PROMPT_CONFIG | Invoke-Expression
 
 # Import-Module
-Import-Module Terminal-Icons
+# Import-Module Terminal-Icons
 Import-Module z
 Import-Module posh-git
 
@@ -36,8 +36,8 @@ function b { nr build }
 function t { nr test }
 function tu { nr test -u }
 function c { nr typecheck }
-function lint { nr lint }
-function lintf { nr lint --fix }
+function l { nr lint }
+function lf { nr lint --fix }
 function release { nr release }
 
 function pull { git pull }
