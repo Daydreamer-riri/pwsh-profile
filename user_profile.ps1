@@ -49,6 +49,13 @@ function which ($command) {
     Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
 }
 
+function qrcode {
+  param (
+    $InputValue
+  )
+  curl -d "$InputValue" https://qrcode.show
+}
+
 # Tab completion
 
 # winget
@@ -65,4 +72,7 @@ Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
 # pnpm  (https://github.com/g-plane/pnpm-shell-completion)
 $PNPM_COMPLETION_SCRIPT = Join-Path (Get-ScriptDirectory) 'pnpm-shell-completion\pnpm-shell-completion.ps1'
 . $PNPM_COMPLETION_SCRIPT
+
+$VSCODE_PLUGIN = Join-Path (Get-ScriptDirectory) 'customs\vscode.plugin.ps1'
+. $VSCODE_PLUGIN
 
