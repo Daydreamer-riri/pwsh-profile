@@ -12,7 +12,7 @@ $PROMPT_CONFIG = Join-Path (Get-ScriptDirectory) 'pure-moded.omp.json'
 oh-my-posh init pwsh --config $PROMPT_CONFIG | Invoke-Expression
 
 # Import-Module
-Import-Module Terminal-Icons
+# Import-Module Terminal-Icons
 Import-Module z
 Import-Module posh-git
 
@@ -26,6 +26,7 @@ Set-PSReadLineOption -PredictionSource HistoryAndPlugin
 Set-PSReadLineOption -BellStyle None
 Set-PSReadLineKeyHandler -Chord 'Ctrl+d' -Function DeleteChar
 Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+Set-PSReadLineKeyHandler -Chord "Ctrl+RightArrow" -Function ForwardWord
 
 # Alias
 Set-Alias vim nvim
@@ -36,8 +37,8 @@ function b { nr build }
 function t { nr test }
 function tu { nr test -u }
 function c { nr typecheck }
-function lint { nr lint }
-function lintf { nr lint --fix }
+function l { nr lint }
+function lf { nr lint --fix }
 function release { nr release }
 
 function pull { git pull }
@@ -47,6 +48,13 @@ function push { git push }
 function which ($command) {
   Get-Command -Name $command -ErrorAction SilentlyContinue |
     Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
+}
+
+function qrcode {
+  param (
+    $InputValue
+  )
+  curl -d "$InputValue" https://qrcode.show
 }
 
 # Tab completion
@@ -65,4 +73,7 @@ Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
 # pnpm  (https://github.com/g-plane/pnpm-shell-completion)
 $PNPM_COMPLETION_SCRIPT = Join-Path (Get-ScriptDirectory) 'pnpm-shell-completion\pnpm-shell-completion.ps1'
 . $PNPM_COMPLETION_SCRIPT
+
+$VSCODE_PLUGIN = Join-Path (Get-ScriptDirectory) 'customs\vscode.plugin.ps1'
+. $VSCODE_PLUGIN
 
