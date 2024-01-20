@@ -33,5 +33,5 @@ and enter the init line
 
 ## Preview
 
-![image1](https://daydreamer-riri.me/_astro/preview1.08b66b2d_ZPCXpa.webp)
-![image2](https://daydreamer-riri.me/_astro/preview2.9ce9352f_2vKlsS.webp)
+![image1](https://daydreamer-riri.me/blog/my-pwsh-profile/preview1.png)
+![image2](https://daydreamer-riri.me/blog/my-pwsh-profile/preview2.png)
