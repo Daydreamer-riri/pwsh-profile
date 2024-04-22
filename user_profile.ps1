@@ -2,7 +2,7 @@
 # . $env:USERPROFILE\.config\pwsh-profile\user_profile.ps1
 
 # Location
-# ~/.config/powershell/user_profile.ps1 
+# ~/.config/powershell/user_profile.ps1
 
 # Load prompt config
 function Get-ScriptDirectory {
@@ -55,6 +55,19 @@ function qrcode {
     $InputValue
   )
   curl -d "$InputValue" https://qrcode.show
+}
+
+function kill_port ($port) {
+  netstat -ano | findstr "$port"
+}
+
+function clone ($url) {
+  git clone ("$url" + ".git")
+  Set-Location (Split-Path -Leaf $url)
+}
+
+function .. {
+  Set-Location ..
 }
 
 # Tab completion
