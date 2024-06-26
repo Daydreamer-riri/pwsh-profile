@@ -90,3 +90,5 @@ $PNPM_COMPLETION_SCRIPT = Join-Path (Get-ScriptDirectory) 'pnpm-shell-completion
 $VSCODE_PLUGIN = Join-Path (Get-ScriptDirectory) 'customs\vscode.plugin.ps1'
 . $VSCODE_PLUGIN
 
+# fnm
+fnm env --use-on-cd | Out-String | Invoke-Expression
