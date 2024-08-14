@@ -8,17 +8,34 @@
 function Get-ScriptDirectory {
   Split-Path $MyInvocation.ScriptName
 }
-$PROMPT_CONFIG = Join-Path (Get-ScriptDirectory) 'pure-moded.omp.json'
-oh-my-posh init pwsh --config $PROMPT_CONFIG | Invoke-Expression
+# $PROMPT_CONFIG = Join-Path (Get-ScriptDirectory) 'pure-moded.omp.json'
+# oh-my-posh init pwsh --config $PROMPT_CONFIG | Invoke-Expression
 
-# Import-Module
 # Import-Module Terminal-Icons
-Import-Module z
-Import-Module posh-git
+Invoke-Expression (&starship init powershell)
 
-$env:POSH_GIT_ENABLED = $true
+$LazyLoadProfile = [PowerShell]::Create()
+[void]$LazyLoadProfile.AddScript(@'
+    Import-Module posh-git
+'@)
+$LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
+$LazyLoadProfile.Runspace = $LazyLoadProfileRunspace
+$LazyLoadProfileRunspace.Open()
+[void]$LazyLoadProfile.BeginInvoke()
 
-Invoke-Expression -Command $(gh completion -s powershell | Out-String)
+$null = Register-ObjectEvent -InputObject $LazyLoadProfile -EventName InvocationStateChanged -Action {
+    Import-Module -Name posh-git
+    $global:GitPromptSettings.EnableFileStatus = $false
+    $LazyLoadProfile.Dispose()
+    $LazyLoadProfileRunspace.Close()
+    $LazyLoadProfileRunspace.Dispose()
+    Invoke-Expression (& { (zoxide init powershell | Out-String) })
+}
+# Import-Module posh-git
+
+# $env:POSH_GIT_ENABLED = $true
+
+# Invoke-Expression -Command $(gh completion -s powershell | Out-String)
 
 # PSReadLine
 Set-PSReadLineOption -PredictionViewStyle ListView
@@ -31,6 +48,7 @@ Set-PSReadLineKeyHandler -Chord "Ctrl+RightArrow" -Function ForwardWord
 # Alias
 Set-Alias vim nvim
 Remove-Item Alias:ni -Force -ErrorAction Ignore # remove `ni` to use @antfu/ni
+Remove-Item Alias:ls -Force -ErrorAction Ignore # remove `ls` to use eza
 function d { nr dev }
 function s { nr start }
 function b { nr build }
@@ -43,7 +61,15 @@ function release { nr release }
 
 function pull { git pull }
 function push { git push }
+function lg { lazygit }
 
+function ll {
+  eza -s=type --icons -1
+}
+
+function ls {
+  eza -s=type --icons -l
+}
 # Utilities
 function which ($command) {
   Get-Command -Name $command -ErrorAction SilentlyContinue |
@@ -92,3 +118,21 @@ $VSCODE_PLUGIN = Join-Path (Get-ScriptDirectory) 'customs\vscode.plugin.ps1'
 
 # fnm
 fnm env --use-on-cd | Out-String | Invoke-Expression
+$FZF_PLUGIN = Join-Path (Get-ScriptDirectory) 'customs\fzf.ps1'
+. $FZF_PLUGIN
+
+Import-Module -Name CompletionPredictor
+
+# ENV
+$ENV:CURRENT_SHELL = "pwsh"
+$env:YAZI_FILE_ONE = "C:\Program Files\Git\usr\bin\file.exe"
+
+function Invoke-Starship-PreCommand {
+  $loc = $executionContext.SessionState.Path.CurrentLocation;
+  $prompt = "$([char]27)]9;12$([char]7)"
+  if ($loc.Provider.Name -eq "FileSystem")
+  {
+    $prompt += "$([char]27)]9;9;`"$($loc.ProviderPath)`"$([char]27)\"
+  }
+  $host.ui.Write($prompt)
+}
