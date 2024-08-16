@@ -17,6 +17,7 @@ Invoke-Expression (&starship init powershell)
 $LazyLoadProfile = [PowerShell]::Create()
 [void]$LazyLoadProfile.AddScript(@'
     Import-Module posh-git
+    Import-Module -Name CompletionPredictor
 '@)
 $LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
 $LazyLoadProfile.Runspace = $LazyLoadProfileRunspace
@@ -25,12 +26,13 @@ $LazyLoadProfileRunspace.Open()
 
 $null = Register-ObjectEvent -InputObject $LazyLoadProfile -EventName InvocationStateChanged -Action {
     Import-Module -Name posh-git
+    Import-Module -Name CompletionPredictor
     $global:GitPromptSettings.EnableFileStatus = $false
     $LazyLoadProfile.Dispose()
     $LazyLoadProfileRunspace.Close()
     $LazyLoadProfileRunspace.Dispose()
-    Invoke-Expression (& { (zoxide init powershell | Out-String) })
 }
+Import-Module -Name PsFzf
 # Import-Module posh-git
 
 # $env:POSH_GIT_ENABLED = $true
@@ -38,95 +40,28 @@ $null = Register-ObjectEvent -InputObject $LazyLoadProfile -EventName Invocation
 # Invoke-Expression -Command $(gh completion -s powershell | Out-String)
 
 # PSReadLine
+Set-PSReadLineOption -EditMode Emacs
 Set-PSReadLineOption -PredictionViewStyle ListView
 Set-PSReadLineOption -PredictionSource HistoryAndPlugin
 Set-PSReadLineOption -BellStyle None
 Set-PSReadLineKeyHandler -Chord 'Ctrl+d' -Function DeleteChar
 Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+# Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
 Set-PSReadLineKeyHandler -Chord "Ctrl+RightArrow" -Function ForwardWord
 
-# Alias
-Set-Alias vim nvim
-Remove-Item Alias:ni -Force -ErrorAction Ignore # remove `ni` to use @antfu/ni
-Remove-Item Alias:ls -Force -ErrorAction Ignore # remove `ls` to use eza
-function d { nr dev }
-function s { nr start }
-function b { nr build }
-function t { nr test }
-function tu { nr test -u }
-function c { nr typecheck }
-function l { nr lint }
-function lf { nr lint --fix }
-function release { nr release }
 
-function pull { git pull }
-function push { git push }
-function lg { lazygit }
-
-function ll {
-  eza -s=type --icons -1
-}
-
-function ls {
-  eza -s=type --icons -l
-}
-# Utilities
-function which ($command) {
-  Get-Command -Name $command -ErrorAction SilentlyContinue |
-    Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
-}
-
-function qrcode {
-  param (
-    $InputValue
-  )
-  curl -d "$InputValue" https://qrcode.show
-}
-
-function kill_port ($port) {
-  netstat -ano | findstr "$port"
-}
-
-function clone ($url) {
-  git clone ("$url" + ".git")
-  Set-Location (Split-Path -Leaf $url)
-}
-
-function .. {
-  Set-Location ..
-}
-
-# Tab completion
-
-# winget
-Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
-    param($wordToComplete, $commandAst, $cursorPosition)
-        [Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
-        $Local:word = $wordToComplete.Replace('"', '""')
-        $Local:ast = $commandAst.ToString().Replace('"', '""')
-        winget complete --word="$Local:word" --commandline "$Local:ast" --position $cursorPosition | ForEach-Object {
-            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
-        }
-}
 
 # pnpm  (https://github.com/g-plane/pnpm-shell-completion)
 $PNPM_COMPLETION_SCRIPT = Join-Path (Get-ScriptDirectory) 'pnpm-shell-completion\pnpm-shell-completion.ps1'
 . $PNPM_COMPLETION_SCRIPT
 
-$VSCODE_PLUGIN = Join-Path (Get-ScriptDirectory) 'customs\vscode.plugin.ps1'
-. $VSCODE_PLUGIN
-
 # fnm
 fnm env --use-on-cd | Out-String | Invoke-Expression
-$FZF_PLUGIN = Join-Path (Get-ScriptDirectory) 'customs\fzf.ps1'
-. $FZF_PLUGIN
+Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
-Import-Module -Name CompletionPredictor
 
-# ENV
-$ENV:CURRENT_SHELL = "pwsh"
-$env:YAZI_FILE_ONE = "C:\Program Files\Git\usr\bin\file.exe"
 
+# for duplicate pane
 function Invoke-Starship-PreCommand {
   $loc = $executionContext.SessionState.Path.CurrentLocation;
   $prompt = "$([char]27)]9;12$([char]7)"
@@ -135,4 +70,9 @@ function Invoke-Starship-PreCommand {
     $prompt += "$([char]27)]9;9;`"$($loc.ProviderPath)`"$([char]27)\"
   }
   $host.ui.Write($prompt)
+}
+
+$_ScriptsDirectory = Join-Path (Get-ScriptDirectory) 'customs'
+Get-ChildItem -Path $_ScriptsDirectory -Filter *.ps1 | ForEach-Object {
+    . $_.FullName
 }
