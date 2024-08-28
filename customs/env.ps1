@@ -1,4 +1,8 @@
 
 # ENV
 $ENV:CURRENT_SHELL = "pwsh"
-$env:YAZI_FILE_ONE = "C:\Program Files\Git\usr\bin\file.exe"
+
+$ENV:XDG_CONFIG_HOME = "$env:USERPROFILE\.config"
+
+$ENV:BAT_CONFIG_PATH = "$env:USERPROFILE\.config\bat.conf"
+$ENV:BAT_THEME = "gruvbox-dark"

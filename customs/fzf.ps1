@@ -81,7 +81,7 @@ function rgg
   }
 }
 
-function nvf {
+function fe {
   try {
     $input_path = _fzf_get_path_using_fd
     if ($input_path -match "^.*:\d+:.*$")
@@ -99,20 +99,20 @@ function nvf {
   }
 }
 
-Set-PSReadLineKeyHandler -Key "Ctrl+f" -ScriptBlock {
-  [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
-  [Microsoft.PowerShell.PSConsoleReadLine]::Insert("fdg")
-  [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
-}
-
-Set-PSReadLineKeyHandler -Key "Ctrl+g" -ScriptBlock {
-  [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
-  [Microsoft.PowerShell.PSConsoleReadLine]::Insert("rgg")
-  [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
-}
-
-Set-PSReadLineKeyHandler -Key "Ctrl+n" -ScriptBlock {
-  [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
-  [Microsoft.PowerShell.PSConsoleReadLine]::Insert("nvf")
-  [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
-}
+# Set-PSReadLineKeyHandler -Key "Ctrl+f" -ScriptBlock {
+#   [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+#   [Microsoft.PowerShell.PSConsoleReadLine]::Insert("fdg")
+#   [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+# }
+#
+# Set-PSReadLineKeyHandler -Key "Ctrl+g" -ScriptBlock {
+#   [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+#   [Microsoft.PowerShell.PSConsoleReadLine]::Insert("rgg")
+#   [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+# }
+#
+# Set-PSReadLineKeyHandler -Key "Ctrl+n" -ScriptBlock {
+#   [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+#   [Microsoft.PowerShell.PSConsoleReadLine]::Insert("nvf")
+#   [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+# }

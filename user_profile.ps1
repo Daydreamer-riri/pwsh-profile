@@ -8,35 +8,10 @@
 function Get-ScriptDirectory {
   Split-Path $MyInvocation.ScriptName
 }
-# $PROMPT_CONFIG = Join-Path (Get-ScriptDirectory) 'pure-moded.omp.json'
-# oh-my-posh init pwsh --config $PROMPT_CONFIG | Invoke-Expression
 
-# Import-Module Terminal-Icons
 Invoke-Expression (&starship init powershell)
 
-$LazyLoadProfile = [PowerShell]::Create()
-[void]$LazyLoadProfile.AddScript(@'
-    Import-Module posh-git
-    Import-Module -Name CompletionPredictor
-'@)
-$LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
-$LazyLoadProfile.Runspace = $LazyLoadProfileRunspace
-$LazyLoadProfileRunspace.Open()
-[void]$LazyLoadProfile.BeginInvoke()
-
-$null = Register-ObjectEvent -InputObject $LazyLoadProfile -EventName InvocationStateChanged -Action {
-    Import-Module -Name posh-git
-    Import-Module -Name CompletionPredictor
-    $global:GitPromptSettings.EnableFileStatus = $false
-    $LazyLoadProfile.Dispose()
-    $LazyLoadProfileRunspace.Close()
-    $LazyLoadProfileRunspace.Dispose()
-}
-Import-Module -Name PsFzf
-# Import-Module posh-git
-
-# $env:POSH_GIT_ENABLED = $true
-
+# Import-Module -Name PsFzf
 # Invoke-Expression -Command $(gh completion -s powershell | Out-String)
 
 # PSReadLine
@@ -48,21 +23,19 @@ Set-PSReadLineOption -BellStyle None
 Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 Set-PSReadLineKeyHandler -Key 'Ctrl+t' -ScriptBlock { Invoke-FzfTabCompletion }
 Set-PSReadLineKeyHandler -Chord "Ctrl+RightArrow" -Function ForwardWord
-
-
-
-# pnpm  (https://github.com/g-plane/pnpm-shell-completion)
-$PNPM_COMPLETION_SCRIPT = Join-Path (Get-ScriptDirectory) 'pnpm-shell-completion\pnpm-shell-completion.ps1'
-. $PNPM_COMPLETION_SCRIPT
+Set-PSReadLineOption -Colors @{ "Selection" = "`e[7m" }
+carapace _carapace | Out-String | Invoke-Expression
 
 # fnm
 fnm env --use-on-cd | Out-String | Invoke-Expression
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
-
-
-# for duplicate pane
+# for windows terminal duplicate pane
 function Invoke-Starship-PreCommand {
+  if (!$env:WT_SESSION)
+  {
+    return
+  }
   $loc = $executionContext.SessionState.Path.CurrentLocation;
   $prompt = "$([char]27)]9;12$([char]7)"
   if ($loc.Provider.Name -eq "FileSystem")
