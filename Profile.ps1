@@ -1,6 +1,9 @@
 # in profile:
 # . $env:USERPROFILE\.config\pwsh-profile\user_profile.ps1
 
+# Encoding
+$OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = [Text.UTF8Encoding]::UTF8
+
 # Location
 # ~/.config/powershell/user_profile.ps1
 
